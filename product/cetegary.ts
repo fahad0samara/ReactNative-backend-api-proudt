@@ -1,7 +1,7 @@
 import express from 'express'
 const router = express.Router();
 import { listCategory, listProducts } from "./Data";
- 
+
 
 
 router.get("/product", (req: any, res: any) => {
@@ -12,8 +12,8 @@ router.get("/product", (req: any, res: any) => {
             img: item.img,
             type: item.type,
             pricePerKg: item.pricePerKg,
-        
-        
+
+
 
         }))
         .filter(item => {
@@ -21,17 +21,17 @@ router.get("/product", (req: any, res: any) => {
                 return item.type === parseInt(req.query.type);
             }
             return item;
-         
-            
 
-          
+
+
+
         })
         .filter(item =>
             req.query.search ? item.name.toLowerCase().includes(req.query.search.toLowerCase()) : item
-        
-            
-              
-    ));
+
+
+
+        ));
 
 
 
@@ -42,6 +42,8 @@ router.get("/product", (req: any, res: any) => {
 router.get("/category", (req: any, res: any) => {
     return res.json(listCategory);
 });
+
+
 
 
 
