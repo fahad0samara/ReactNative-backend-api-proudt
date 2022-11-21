@@ -97,22 +97,42 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
 // logout
 router.get("/logout", authToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.headers && req.headers.authorization) {
-        const token = req.headers.authorization.split(" ")[1];
-        if (!token)
-            return res.status(401).send("Access Denied");
-        const tokens = req.user.tokens.filter((t) => t.token !== token);
-        yield User.findByIdAndUpdate(req.user._id, {
-            tokens
-        });
-        res.send({
-            succuss: true,
-            message: "logout successfully",
-        });
-    }
-    else {
-        res.status(401).send("Access Denied");
+        try {
+            const token = req.headers.authorization.split(" ")[1];
+            if (!token)
+                return res.status(401).send("Access Denied");
+            const tokens = req.user.tokens.filter((t) => t.token !== token);
+            yield User.findByIdAndUpdate(req.user._id, {
+                tokens
+            });
+            res.send({
+                succuss: true,
+                message: "logout successfully",
+            });
+        }
+        catch (error) {
+            console.log('====================================');
+            console.log("🚀 ~ file: auth.ts ~ line 135 ~ router.get ~ error", error);
+            console.log('====================================');
+            res.status(400).json({
+                succuss: false,
+                message: "Invalid Token",
+            });
+        }
     }
 }));
-;
+router.get("/profile", authToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user) {
+        return res.json({
+            success: false,
+            message: "User not found",
+        });
+    }
+    res.json({
+        success: true,
+        message: "User found",
+        user: req.user,
+    });
+}));
 module.exports = router;
 exports.default = router;

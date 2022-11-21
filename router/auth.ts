@@ -106,27 +106,58 @@ router.post("/login", async (req: any, res: any) => {
 // logout
 router.get("/logout", authToken, async (req: any, res: any) => {
   if (req.headers && req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) return res.status(401).send("Access Denied");
-    const tokens = req.user.tokens.filter((t: { token: any; }) => t.token !== token);
-    await User.findByIdAndUpdate(req.user._id, {
-      tokens
-    })
-    res.send({
-      succuss: true,
-      message: "logout successfully",
-    });
-  } else {
-    res.status(401).send("Access Denied");
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      if (!token) return res.status(401).send("Access Denied");
+      const tokens = req.user.tokens.filter((t: { token: any; }) => t.token !== token);
+      await User.findByIdAndUpdate(req.user._id, {
+        tokens
+      })
+      res.send({
+        succuss: true,
+        message: "logout successfully",
+      });
+
+    } catch (error) {
+      console.log('====================================');
+      console.log(
+        "🚀 ~ file: auth.ts ~ line 135 ~ router.get ~ error",
+        error
+      );
+      console.log('====================================');
+      res.status(400).json({
+        succuss: false,
+        message: "Invalid Token",
+      });
+
+
+
+    }
+
   }
+
+
+
+});
+
+router.get("/profile", authToken, async (req: any, res: any) => {
+  if (!req.user)  { 
+    return res.json({
+      success: false,
+      message: "User not found",
+
+
+    });
+  }
+  res.json({
+    success: true,
+    message: "User found",
+    user: req.user,
+
+  });
 });
 
 
- 
- 
-
-
-;
 
 
 
@@ -134,7 +165,14 @@ router.get("/logout", authToken, async (req: any, res: any) => {
 
 
 
-  
+
+
+
+
+
+
+
+
 
 
 
