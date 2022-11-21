@@ -17,6 +17,8 @@ const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authToken = require("../model/authToken");
+const cloudinary = require("../config/Cloudinary");
+const multer = require('multer');
 const { registerValidation, loginValidation } = require("../model/Vailadition");
 const router = express_1.default.Router();
 // register the user and save to the database
@@ -133,6 +135,40 @@ router.get("/profile", authToken, (req, res) => __awaiter(void 0, void 0, void 0
         message: "User found",
         user: req.user,
     });
+}));
+const upload = multer({
+    dest: "uploads/",
+});
+router.post("/upload", authToken, upload.single("image"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user } = req;
+    if (!user)
+        return res
+            .status(400)
+            .json({ success: false, message: "unauthorized access!" });
+    try {
+        // update the image for user
+        const result = yield cloudinary.uploader.upload(req.file.path, {
+            upload_preset: "ml_default",
+        });
+        const post = yield User.findByIdAndUpdate(user._id, {
+            image: {
+                url: result.secure_url,
+                public_id: result.public_id,
+            },
+        }, { new: true });
+        res.json({
+            success: true,
+            post,
+            message: "image uploaded successfully",
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            success: false,
+            message: "image upload failed",
+            error,
+        });
+    }
 }));
 module.exports = router;
 exports.default = router;

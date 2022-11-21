@@ -40,6 +40,16 @@ const userSchema = new mongoose.Schema({
         min: 6,
         max: 1024
     },
+    
+           image: {
+      type: Object,
+
+      url: "",
+      public_id: "",
+    
+      
+    },
+    
     date: {
         type: Date,
         default: Date.now
