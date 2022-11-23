@@ -141,6 +141,73 @@ router.get("/logout", authToken, async (req: any, res: any) => {
 
 
 });
+// update the user
+router.put("/update", authToken, async (req: any, res: any) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+
+      
+    });
+;
+    if (!user) return res.status(400).send("Email is not found");
+
+    if (req.body.password) {
+      // hash passwords
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      await User.findByIdAndUpdate(req.user._id, {
+        password: hashedPassword,
+      });
+    }
+
+
+    res.json({
+      succuss: true,
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      
+      
+
+     
+
+      
+      message: "update successfully",
+    });
+
+
+
+  
+
+  } catch (error) {
+    res.status
+  }
+});
+
+// get the user
+router.get("/user", authToken, async (req: any, res: any) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.json({
+      succuss: true,
+      user,
+    });
+  } catch (error) {
+    res.status(400).json({
+      succuss: false,
+      message: "Invalid Token",
+    });
+  }
+});
+
+
+
+
+
+
 
 router.get("/profile", authToken, async (req: any, res: any) => {
   if (!req.user)  { 

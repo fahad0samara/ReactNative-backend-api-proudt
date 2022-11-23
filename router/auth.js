@@ -123,6 +123,53 @@ router.get("/logout", authToken, (req, res) => __awaiter(void 0, void 0, void 0,
         }
     }
 }));
+// update the user
+router.put("/update", authToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User.findByIdAndUpdate(req.user._id, {
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+        });
+        ;
+        if (!user)
+            return res.status(400).send("Email is not found");
+        if (req.body.password) {
+            // hash passwords
+            const salt = yield bcrypt.genSalt(10);
+            const hashedPassword = yield bcrypt.hash(req.body.password, salt);
+            yield User.findByIdAndUpdate(req.user._id, {
+                password: hashedPassword,
+            });
+        }
+        res.json({
+            succuss: true,
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            message: "update successfully",
+        });
+    }
+    catch (error) {
+        res.status;
+    }
+}));
+// get the user
+router.get("/user", authToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User.findById(req.user._id);
+        res.json({
+            succuss: true,
+            user,
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            succuss: false,
+            message: "Invalid Token",
+        });
+    }
+}));
 router.get("/profile", authToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
         return res.json({
