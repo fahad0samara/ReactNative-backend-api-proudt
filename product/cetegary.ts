@@ -22,36 +22,16 @@ router.get("/product", (req: any, res: any) => {
             }
             return item;
 
-
-
-
         })
         .filter(item =>
             req.query.search ? item.name.toLowerCase().includes(req.query.search.toLowerCase()) : item
 
-
-
         ));
 
-
-
 });
-
 
 /* Returning the list of categories. */
 router.get("/category", (req: any, res: any) => {
     return res.json(listCategory);
 });
-
-
-
-
-
-
-
-
-
-
-
-
 export default router;
